@@ -13,16 +13,17 @@ class DatabaseSeeder extends Seeder
     {
         $this->command->info('🌱 Starting database seeding...');
 
-        // 1. Buat admin user (idempotent)
-        User::updateOrCreate(
+        // 1. Buat admin user (idempotent) — create with a default password if missing
+        User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Administrator',
                 'role' => 'admin',
                 'email_verified_at' => now(),
+                'password' => bcrypt('password'),
             ]
         );
-        $this->command->info('✅ Admin user ensured: admin@example.com');
+        $this->command->info('✅ Admin user ensured: admin@example.com (password: password)');
 
         // 2. Buat beberapa customer
         User::factory(10)->create(['role' => 'customer']);
@@ -42,5 +43,15 @@ class DatabaseSeeder extends Seeder
         $this->command->newLine();
         $this->command->info('🎉 Database seeding completed!');
         $this->command->info('📧 Admin login: admin@example.com / password');
+
+        // create sample user (idempotent)
+        User::firstOrCreate(
+            ['email' => 'admin@tokoonline.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('password'),
+                'role' => 'customer',
+            ]
+        );
     }
 }
