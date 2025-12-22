@@ -46,13 +46,9 @@
                 @auth
                     {{-- Wishlist --}}
                     <li class="nav-item">
-                        <a class="nav-link position-relative" href="{{ route('wishlist.index') }}">
+                        <a class="nav-link position-relative" href="#">
                             <i class="bi bi-heart"></i>
-                                @auth
-                                    <span class="badge bg-danger">
-                                      {{ auth()->user()->wishlists?->count() ?? 0 }}
-                                    </span>
-                                @endauth
+                                Wishlist
                         </a>
                     </li>
 
