@@ -28,17 +28,28 @@ class CheckoutController extends Controller
 
         $user = Auth::user();
 
-        DB::transaction(function () use ($user, $data) {
-            $cart = $user->cart()->with('items.product')->first();
+        try {
+            DB::transaction(function () use ($user, $data) {
+                $cart = $user->cart()->with('items.product')->first();
 
-            if (!$cart || $cart->items->isEmpty()) {
-                abort(400, 'Keranjang kosong.');
-            }
+                if (!$cart || $cart->items->isEmpty()) {
+                    throw new \Exception('Keranjang kosong');
+                }
 
-            // TODO: buat Order & OrderItems di sini. Untuk demo, kosongkan keranjang.
-            $cart->items()->delete();
-        });
+                // TODO: Buat order & order_items di sini
 
-        return redirect()->route('orders.index')->with('success', 'Checkout berhasil.');
+                // Kosongkan cart
+                $cart->items()->delete();
+            });
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('cart.index')
+                ->with('error', $e->getMessage());
+        }
+
+        return redirect()
+            ->route('orders.index')
+            ->with('success', 'Checkout berhasil.');
     }
-}
+
+   }

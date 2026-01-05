@@ -1,32 +1,21 @@
 <?php
-// bootstrap/app.php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
+return [
 
-return Application::configure(basePath: dirname(__DIR__))
-    ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
-        health: '/up',
-    )
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
-        ]);
+    /*
+    |--------------------------------------------------------------------------
+    | Application Service Providers
+    |--------------------------------------------------------------------------
+    |
+    | The service providers listed here will be automatically loaded on the
+    | request to your application. Feel free to add your own services to
+    | this array to grant expanded functionality to your applications.
+    |
+    */
 
-        // ==========================================================
-        // BYPASS CSRF FOR WEBHOOKS
-        // ==========================================================
-        // Midtrans mengirim POST request dari luar aplikasi kita.
-        // Mereka tidak tahu CSRF Token kita. Jadi URL ini harus
-        // dikecualikan dari proteksi CSRF.
-        $middleware->validateCsrfTokens(except: [
-            'midtrans/notification', // Endpoint webhook kita
-            'midtrans/*',            // Wildcard (jika ada route lain)
-        ]);
-    })
-    ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
+    App\Providers\AppServiceProvider::class,
+    App\Providers\AuthServiceProvider::class,
+    App\Providers\EventServiceProvider::class,
+    App\Providers\RouteServiceProvider::class,
+
+];

@@ -10,12 +10,13 @@ class PaymentController extends Controller
 {
     public function getSnapToken(Order $order, MidtransService $midtransService)
     {
-        if ($order->user_id !== auth()->id()) (
+        if ($order->user_id !== auth()->id()) {
             abort(403);
-        )
-        if ($order->payment_status == 'paid') (
+        }
+        if ($order->payment_status == 'paid') {
             return response()->json(['error' => 'Pesanan sudah dibayar'], 400);
-        )
+        }
+        
 
         try {
             $snapToken = $midtransService->createSnapToken($order);

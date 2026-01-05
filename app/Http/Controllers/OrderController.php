@@ -1,18 +1,42 @@
 <?php
+// app/Http/Controllers/OrderController.php
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index()
+    /**
+     * Menampilkan daftar pesanan milik user yang sedang login.
+     */
+    public function index(Request $request)
     {
-        return view('admin.orders.index');
+        $orders = auth()->user()
+            ->orders()
+            ->latest()
+            ->get();
+
+        return view('orders.index', compact('orders'));
     }
 
-    public function show($order)
+    /**
+     * Menampilkan detail satu pesanan.
+     */
+    public function show(Order $order)
     {
-        return view('admin.orders.show', ['order' => $order]);
+        // 1. Authorize (Security Check)
+        // User A TIDAK BOLEH melihat pesanan User B.
+        // Kita cek apakah ID pemilik order sama dengan ID user yang login.
+        if ($order->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
+        }
+
+        // 2. Load relasi detail
+        // Kita butuh data items dan gambar produknya untuk ditampilkan di invoice view.
+        $order->load(['items.product', 'items.product.primaryImage']);
+
+        return view('orders.show', compact('order'));
     }
 }

@@ -20,7 +20,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\PaymentController;
 use App\Services\MidtransService;
-
+use App\Http\Controllers\MidtransNotificationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -49,8 +49,8 @@ Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index
 
 
 // Authentication routes (simple)
-Route::get('login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('login', [AuthController::class, 'login']);
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 // Register
@@ -348,3 +348,9 @@ Route::get('/admin/reports/sales', [ReportController::class, 'sales'])->name('ad
 Route::get('/wishlist', function () {
     return "Halaman Wishlist";
 })->name('wishlist.index');
+
+Route::post('midtrans/notification', [MidtransNotificationController::class, 'handle'])->name('midtrans.notification');
+
+Route::get('/test-orders', function () {
+    return auth()->user()->orders;
+})->middleware('auth');

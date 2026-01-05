@@ -13,6 +13,11 @@
         <i class="bi bi-cart3 me-2"></i>Keranjang Belanja
     </h2>
 
+@if(session('error'))
+    <div class="alert alert-warning">
+        {{ session('error') }}
+    </div>
+@endif
     @if(isset($cart) && $cart->items->count())
         <div class="row">
             {{-- Cart Items --}}

@@ -6,6 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany; // Import class ini
+use App\Models\Orders;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
@@ -54,7 +57,7 @@ class User extends Authenticatable
 
     protected function orders()
     {
-        return $this->hasOne(Orders::class);
+        return $this->hasMany(Order::class);
     }
 
 
