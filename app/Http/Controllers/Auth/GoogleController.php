@@ -67,6 +67,8 @@ class GoogleController extends Controller
      */
     public function callback()
     {
+        \Log::info('Google OAuth Callback Hit');
+        \Log::info('Request Data: ', request()->all());
         // ================================================
         // CEK JIKA USER MEMBATALKAN LOGIN
         // ================================================

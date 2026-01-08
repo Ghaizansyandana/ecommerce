@@ -16,6 +16,12 @@ class CartItem extends Model
     /**
      * Product belonging to this cart item.
      */
+    // Tambahkan ini di dalam class CartItem
+    public function getSubtotalAttribute()
+    {
+        return $this->product->price * $this->quantity;
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');

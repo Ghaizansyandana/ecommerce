@@ -16,7 +16,8 @@
 
         <div class="bg-white rounded-lg shadow-md p-8">
             <form action="/admin/products" method="POST" enctype="multipart/form-data">
-                @csrf <div class="grid grid-cols-1 gap-6">
+                @csrf 
+                <div class="grid grid-cols-1 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
                         <input type="text" name="name" class="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Contoh: Kopi Susu" required>
@@ -27,16 +28,33 @@
                         <input type="number" name="price" class="w-full border border-gray-300 rounded-md p-2" placeholder="0" required>
                     </div>
 
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Stok</label>
+                            <input type="number" name="stock" class="w-full border border-gray-300 rounded-md p-2" placeholder="0" min="0" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Berat (gram)</label>
+                            <input type="number" name="weight" class="w-full border border-gray-300 rounded-md p-2" placeholder="0" min="1" required>
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                        <select name="category_id" class="w-full border border-gray-300 rounded-md p-2">
-                            <option value="">Pilih Kategori</option>
-                            </select>
+                        <select name="category_id" class="w-full border border-gray-300 rounded-md p-2" required>
+                            <option value="" disabled selected>Pilih Kategori</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('category_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Produk</label>
-                        <textarea name="description" rows="4" class="w-full border border-gray-300 rounded-md p-2"></textarea>
+                        <textarea name="description" rows="4" class="w-full border border-gray-300 rounded-md p-2" required></textarea>
                     </div>
 
                     <div>

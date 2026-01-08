@@ -320,6 +320,12 @@ Auth::routes();
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Kategori
+      // Route untuk menampilkan form create
+    Route::get('/admin/products/create', [ProductController::class, 'create'])->name('admin.products.create');
+    
+    // Route untuk menyimpan produk baru (ini yang belum ada)
+    Route::post('/admin/products', [ProductController::class, 'store'])->name('admin.products.store');
+    
     Route::resource('categories', CategoryController::class)->except(['show']);
     // Produk
     Route::resource('products', ProductController::class);
@@ -354,3 +360,19 @@ Route::post('midtrans/notification', [MidtransNotificationController::class, 'ha
 Route::get('/test-orders', function () {
     return auth()->user()->orders;
 })->middleware('auth');
+
+
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('reports')->name('reports.')->group(function () {
+        // Route untuk halaman laporan (yang sedang dibuka)
+        Route::get('/sales', [ReportController::class, 'sales'])->name('sales');
+        
+        // TAMBAHKAN BARIS INI:
+        Route::get('/export-sales', [ReportController::class, 'exportSales'])->name('export-sales');
+    });
+});
+
+Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');

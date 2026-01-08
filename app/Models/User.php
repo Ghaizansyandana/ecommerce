@@ -47,23 +47,35 @@ class User extends Authenticatable
         return $this->hasOne(\App\Models\Cart::class);
     }
 
-
-    protected function wishlists()
+    /**
+     * Get all orders for the user.
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+    /**
+     * Get all wishlist items for the user.
+     */
+    /**
+     * Get the user's wishlist items.
+     */
+    public function wishlists()
     {
         return $this->belongsToMany(Product::class, 'wishlists')
                     ->withTimestamps();
     }
 
-
-    protected function orders()
+    /**
+     * Check if a product is in the user's wishlist.
+     *
+     * @param  \App\Models\Product|int  $product
+     * @return bool
+     */
+    public function isInWishlist($product)
     {
-        return $this->hasMany(Order::class);
-    }
-
-
-    protected function wishlistProducts()
-    {
-        return $this->wishlists()->where('product_id', $product->id)->exists();
+        $productId = $product instanceof Product ? $product->id : $product;
+        return $this->wishlists()->where('product_id', $productId)->exists();
     }
 
 

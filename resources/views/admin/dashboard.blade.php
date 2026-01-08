@@ -3,6 +3,72 @@
 @section('title', 'Dashboard')
 
 @section('content')
+{{-- Script Chart.js --}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+
+        // Data dari Controller
+        // Kita gunakan pluck untuk memisahkan label tanggal dan nominal total
+        const labels = {!! json_encode($revenueChart->pluck('date')) !!};
+        const dataValues = {!! json_encode($revenueChart->pluck('total')) !!};
+
+        // Debugging: Cek di console jika grafik masih kosong
+        console.log("Labels:", labels);
+        console.log("Data:", dataValues);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Pendapatan',
+                    data: dataValues,
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#0d6efd',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Rp ' + new Intl.NumberFormat('id-ID').format(context.raw);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000) {
+                                    return 'Rp ' + (value / 1000) + 'rb';
+                                }
+                                return 'Rp ' + value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    });
+</script>
     <div class="row g-4 mb-4">
         {{-- 1. Stats Cards Grid --}}
 

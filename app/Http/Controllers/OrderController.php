@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/OrderController.php
 
 namespace App\Http\Controllers;
 
@@ -9,16 +8,22 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     /**
-     * Menampilkan daftar pesanan milik user yang sedang login.
+     * Menampilkan daftar SEMUA pesanan (untuk sisi Admin).
      */
     public function index(Request $request)
     {
-        $orders = auth()->user()
-            ->orders()
-            ->latest()
-            ->get();
+        // Jangan pakai auth()->user()->orders() karena itu memfilter hanya milik admin.
+        // Gunakan Order::query() untuk mengambil data dari semua user.
+        $query = Order::with(['user', 'items']);
 
-        return view('orders.index', compact('orders'));
+        // Fitur Filter Berdasarkan Status (Opsional, agar tombol filter Anda berfungsi)
+        if ($request->has('status') && $request->status != 'semua') {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->latest()->paginate(10);
+        
+        return view('admin.orders.index', compact('orders'));
     }
 
     /**
@@ -26,17 +31,11 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        // 1. Authorize (Security Check)
-        // User A TIDAK BOLEH melihat pesanan User B.
-        // Kita cek apakah ID pemilik order sama dengan ID user yang login.
-        if ($order->user_id !== auth()->id()) {
-            abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
-        }
+        // Hapus pengecekan 'if ($order->user_id !== auth()->id())' 
+        // Agar Admin bisa membuka invoice/detail pesanan milik siapa pun.
+        
+        $order->load(['user', 'items.product']);
 
-        // 2. Load relasi detail
-        // Kita butuh data items dan gambar produknya untuk ditampilkan di invoice view.
-        $order->load(['items.product', 'items.product.primaryImage']);
-
-        return view('orders.show', compact('order'));
+        return view('admin.orders.show', compact('order'));
     }
 }
